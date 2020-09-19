@@ -1,41 +1,37 @@
-import { set } from 'core-js/fn/dict';
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   StatusBar,Button,FlatList
 } from 'react-native';
-import ListItem from './src/Redux/Components/ListItem';
+import ListItem from './src/Components/ListItem';
+import {Provider} from 'react-redux';
+import store from './src/react-redux/store';
+import { useDispatch } from "react-redux";
+import { setData } from './src/react-redux/actions';
 
+const AppWrapper = () => {  
+  return (
+    <Provider store={store}> 
+      <App />
+    </Provider>
+  )
+}
 const App = () => {
+  const dispatch = useDispatch();
   const [jsonData, setJsonData] = useState('');
   const [index, setIndex] = useState(0);
    const jsonCalling=()=>{
     fetch('https://picsum.photos/list', {
       method: 'GET'
-      //Request Type 
   })
   .then((response) => response.json())
-  //If response is in json then in success
   .then((responseJson) => {
-      //Success 
       setJsonData(responseJson);
-      //console.log(responseJson);
+      dispatch(setData(responseJson));
   })
-  //If response is not in json then in error
-  .catch((error) => {
-      //Error 
+  .catch((error) => { 
       console.error(error);
   });
    }
@@ -48,6 +44,7 @@ const App = () => {
      refresh();
   }, []);
 
+  
 
   return (
     <View>
@@ -87,4 +84,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+export default AppWrapper;
